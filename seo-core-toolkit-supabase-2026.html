@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO & Web Growth Toolkit 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#e3670a;--bg:#fff;--bg2:#f7f6f3;--bg3:#f1efe8;
+  --text:#1a1a18;--text2:#5f5e5a;--text3:#888780;
+  --border:#e0ded8;--border2:#cccac4;
+  --r:8px;--rl:12px;
+  --phase1:#e3670a;--phase2:#0c447c;--phase3:#1d6f42;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1a18;--bg2:#242422;--bg3:#2c2c2a;
+  --text:#e8e6df;--text2:#9c9a92;--text3:#6b6963;
+  --border:#3a3a38;--border2:#4a4a48;
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.wrap{max-width:920px;margin:0 auto;padding:1.75rem 1.5rem 5rem}
+
+/* HEADER */
+header{margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:.5px solid var(--border)}
+.logo{font-size:10.5px;font-weight:700;color:var(--orange);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.hrow{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+h1{font-size:20px;font-weight:600}
+.hsub{font-size:12.5px;color:var(--text2);margin-top:2px}
+
+/* PHASE SWITCHER */
+.phase-bar{display:flex;gap:0;background:var(--bg2);border:.5px solid var(--border);border-radius:var(--rl);padding:3px;margin-bottom:1.25rem}
+.phase-btn{flex:1;border:none;background:transparent;padding:7px 8px;border-radius:var(--r);font-size:11.5px;font-weight:500;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;line-height:1.3;text-align:center}
+.phase-btn.active{color:#fff;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.phase-btn[data-phase="1"].active{background:var(--phase1)}
+.phase-btn[data-phase="2"].active{background:var(--phase2)}
+.phase-btn[data-phase="3"].active{background:var(--phase3)}
+.phase-label{display:block;font-size:9.5px;font-weight:400;opacity:.85;margin-top:1px}
+
+/* PHASE HEADER CARD */
+.phase-header{border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1.25rem;border:.5px solid var(--border)}
+.ph-top{display:flex;align-items:center;gap:10px;margin-bottom:.4rem}
+.ph-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ph-title{font-size:15px;font-weight:600}
+.ph-meta{font-size:12px;color:var(--text2);line-height:1.6}
+.ph-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:.5rem}
+.ph-tag{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600}
+
+/* GLOBAL PROGRESS */
+.gp{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--rl);padding:.85rem 1.1rem;margin-bottom:1.1rem}
+.gp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.gp-label{font-size:12px;color:var(--text2)}
+.gp-pct{font-size:19px;font-weight:600}
+.gp-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.gp-fill{height:100%;border-radius:2px;transition:width .35s}
+.gp-detail{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* TAB BAR */
+.tab-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.1rem;padding-bottom:.9rem;border-bottom:.5px solid var(--border)}
+.tab-btn{background:transparent;border:.5px solid var(--border2);border-radius:var(--r);padding:5px 10px;font-size:11px;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:4px}
+.tab-btn:hover{background:var(--bg2);color:var(--text)}
+.tab-btn.active{color:#fff;font-weight:600}
+.tab-btn[data-phase="1"].active{background:var(--phase1);border-color:var(--phase1)}
+.tab-btn[data-phase="2"].active{background:var(--phase2);border-color:var(--phase2)}
+.tab-btn[data-phase="3"].active{background:var(--phase3);border-color:var(--phase3)}
+.tab-badge{width:16px;height:16px;border-radius:50%;font-size:9px;font-weight:700;text-align:center;line-height:16px;flex-shrink:0}
+.tab-btn.active .tab-badge{background:rgba(255,255,255,.25);color:#fff}
+.tab-btn:not(.active) .tab-badge{background:var(--bg3);color:var(--text3)}
+.tnew{font-size:9px;padding:1px 4px;border-radius:100px;font-weight:700;background:#f5e9ff;color:#4a1f8c}
+.tab-btn.active .tnew{background:rgba(255,255,255,.2);color:#fff}
+
+/* PANELS */
+.phase-panel{display:none}.phase-panel.active{display:block}
+.stage-view{display:none}.stage-view.active{display:block}
+
+/* INSIGHT */
+.insight{border-left:2px solid var(--orange);padding:8px 12px;background:var(--bg2);border-radius:0 var(--r) var(--r) 0;margin:.7rem 0 .9rem;font-size:12.5px;line-height:1.6}
+.insight strong{color:var(--orange);font-weight:600}
+.insight.blue{border-left-color:var(--phase2)}
+.insight.blue strong{color:var(--phase2)}
+.insight.green{border-left-color:var(--phase3)}
+.insight.green strong{color:var(--phase3)}
+
+/* SECTION LABEL */
+.slabel{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin:1.1rem 0 .45rem;display:flex;align-items:center;gap:6px}
+.slabel-line{flex:1;height:.5px;background:var(--border)}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:3px}
+.ci{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:var(--r);cursor:pointer;transition:background .1s}
+.ci:hover{background:var(--bg2)}
+.ci.done{background:var(--bg2);opacity:.6}
+.ci.done .ci-text{text-decoration:line-through;color:var(--text3)}
+.ci-box{width:15px;height:15px;min-width:15px;border:.5px solid var(--border2);border-radius:3px;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ci.done .ci-box{background:var(--orange);border-color:var(--orange)}
+.ci-ck{display:none;font-size:9px;color:#fff;font-weight:800}
+.ci.done .ci-ck{display:block}
+.ci-body{flex:1}
+.ci-text{font-size:12.5px;line-height:1.5}
+.ci-why{font-size:11.5px;color:var(--text2);margin-top:1px;line-height:1.45}
+.ci-tags{display:inline-flex;gap:3px;margin-left:5px;vertical-align:middle}
+.ctag{font-size:9px;padding:1px 5px;border-radius:100px;font-weight:700}
+.t-crit{background:#fcebeb;color:#a32d2d}
+.t-strat{background:#fdf0e7;color:#7a3200}
+.t-deep{background:#e6f1fb;color:#0c447c}
+.t-new{background:#f5e9ff;color:#4a1f8c}
+.t-qw{background:#e7f5e1;color:#1d6f42}
+.t-month{background:#e0f7fa;color:#006064}
+
+/* STAGE PROGRESS */
+.sp{display:flex;justify-content:space-between;align-items:center;margin:.8rem 0 3px}
+.sp-count{font-size:11px;color:var(--text2)}
+.reset-btn{font-size:10.5px;color:var(--text3);cursor:pointer;background:transparent;border:none;font-family:inherit;text-decoration:underline}
+.spbar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:.8rem}
+.spfill{height:100%;border-radius:2px;transition:width .3s}
+.p1fill{background:var(--phase1)}
+.p2fill{background:var(--phase2)}
+.p3fill{background:var(--phase3)}
+
+/* DEVTOOLS */
+.dt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:6px;margin:.3rem 0 .8rem}
+.dt-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:7px 9px}
+.dt-card strong{font-size:11px;font-weight:700;display:block;margin-bottom:2px}
+.dt-card span{font-size:10.5px;color:var(--text2);line-height:1.4;display:block}
+
+/* RED FLAGS */
+.rf-list{display:flex;flex-direction:column;gap:5px;margin:.3rem 0}
+.rf{display:flex;align-items:flex-start;gap:7px;font-size:12px;line-height:1.5}
+.rf-dot{width:5px;height:5px;min-width:5px;border-radius:50%;background:#e24b4a;margin-top:5px}
+
+/* PRIORITY TAG */
+.ptag{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600;display:inline-block;margin-bottom:.4rem}
+
+/* ===== FASE 3: RETAINER ===== */
+/* WEEK TABS */
+.week-bar{display:flex;gap:5px;margin-bottom:1rem}
+.week-btn{flex:1;border:.5px solid var(--border2);background:transparent;border-radius:var(--r);padding:6px 4px;font-size:11px;font-weight:500;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;text-align:center}
+.week-btn:hover{background:var(--bg2)}
+.week-btn.active{background:var(--phase3);border-color:var(--phase3);color:#fff;font-weight:700}
+.week-label{display:block;font-size:9px;font-weight:400;opacity:.8;margin-top:1px}
+.week-view{display:none}.week-view.active{display:block}
+
+/* KPI TRACKER */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin:.4rem 0 1rem}
+.kpi-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--rl);padding:.85rem 1rem}
+.kpi-name{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:.4rem;display:flex;align-items:center;gap:5px}
+.kpi-icon{font-size:14px}
+.kpi-fields{display:flex;flex-direction:column;gap:5px}
+.kpi-row{display:flex;align-items:center;gap:6px}
+.kpi-row label{font-size:10.5px;color:var(--text2);min-width:52px}
+.kpi-input{flex:1;border:.5px solid var(--border2);border-radius:4px;padding:4px 7px;font-size:12px;background:var(--bg);color:var(--text);font-family:inherit}
+.kpi-input:focus{outline:none;border-color:var(--phase3)}
+.kpi-delta{font-size:10.5px;font-weight:600;min-width:40px;text-align:right}
+.delta-up{color:#1d6f42}.delta-down{color:#a32d2d}.delta-flat{color:var(--text3)}
+
+/* REPORT BUILDER */
+.report-section{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--rl);padding:1rem 1.1rem;margin-top:1rem}
+.report-title{font-size:13px;font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:7px}
+.report-fields{display:flex;flex-direction:column;gap:.6rem;margin-bottom:.85rem}
+.rf-field{display:flex;flex-direction:column;gap:3px}
+.rf-field label{font-size:10.5px;font-weight:600;color:var(--text2)}
+.rf-field input,.rf-field textarea,.rf-field select{border:.5px solid var(--border2);border-radius:var(--r);padding:6px 9px;font-size:12.5px;background:var(--bg);color:var(--text);font-family:inherit;width:100%}
+.rf-field textarea{resize:vertical;min-height:64px;line-height:1.5}
+.rf-field input:focus,.rf-field textarea:focus,.rf-field select:focus{outline:none;border-color:var(--phase3)}
+.report-2col{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media(max-width:520px){.report-2col{grid-template-columns:1fr}}
+
+.gen-btn{background:var(--phase3);color:#fff;border:none;border-radius:var(--r);padding:8px 18px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.gen-btn:hover{opacity:.88}
+
+/* REPORT OUTPUT */
+.report-output{display:none;margin-top:1rem;border:.5px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.ro-header{background:var(--phase3);color:#fff;padding:.9rem 1.1rem}
+.ro-title{font-size:14px;font-weight:700}
+.ro-sub{font-size:11px;opacity:.85;margin-top:2px}
+.ro-body{padding:1rem 1.1rem;background:var(--bg)}
+.ro-section{margin-bottom:1rem;padding-bottom:1rem;border-bottom:.5px solid var(--border)}
+.ro-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.ro-section-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.ro-kpi-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:3px 0;border-bottom:.5px solid var(--border)}
+.ro-kpi-row:last-child{border-bottom:none}
+.ro-kpi-label{color:var(--text2)}
+.ro-kpi-val{font-weight:600}
+.ro-text{font-size:12.5px;line-height:1.7;white-space:pre-wrap}
+.copy-btn{font-size:11px;color:var(--text3);cursor:pointer;background:transparent;border:.5px solid var(--border2);border-radius:var(--r);padding:4px 10px;font-family:inherit;margin-top:.75rem;transition:all .15s}
+.copy-btn:hover{background:var(--bg2);color:var(--text)}
+.copied{color:var(--phase3)!important;border-color:var(--phase3)!important}
+
+/* LEGEND */
+.legend{display:flex;gap:8px;flex-wrap:wrap;padding:7px 10px;background:var(--bg2);border-radius:var(--r);border:.5px solid var(--border);margin-top:1.5rem}
+.legend span{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:3px}
+
+/* PROJECT SELECTOR */
+.project-bar{display:flex;align-items:center;gap:8px;background:var(--bg2);border:.5px solid var(--border);border-radius:var(--rl);padding:.6rem 1rem;margin-bottom:1.1rem;flex-wrap:wrap}
+.project-label{font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap}
+.project-select{flex:1;min-width:160px;border:.5px solid var(--border2);border-radius:var(--r);padding:5px 9px;font-size:12.5px;background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer}
+.project-select:focus{outline:none;border-color:var(--orange)}
+.project-add-btn{border:.5px solid var(--border2);background:transparent;border-radius:var(--r);padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit;white-space:nowrap;transition:all .15s}
+.project-add-btn:hover{background:var(--orange);border-color:var(--orange);color:#fff}
+.project-delete-btn{border:.5px solid var(--border2);background:transparent;border-radius:var(--r);padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text3);font-family:inherit;white-space:nowrap;transition:all .15s}
+.project-delete-btn:hover{background:#fcebeb;border-color:#e24b4a;color:#a32d2d}
+
+/* SYNC STATUS */
+.sync-status{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--text3);margin-left:auto}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
+.sync-dot.syncing{background:#f59e0b;animation:pulse .8s infinite}
+.sync-dot.ok{background:#1d6f42}
+.sync-dot.error{background:#e24b4a}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--bg);border-radius:var(--rl);padding:1.5rem;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:.4rem}
+.modal p{font-size:12.5px;color:var(--text2);margin-bottom:1rem;line-height:1.5}
+.modal input{width:100%;border:.5px solid var(--border2);border-radius:var(--r);padding:7px 10px;font-size:13px;background:var(--bg);color:var(--text);font-family:inherit;margin-bottom:.75rem}
+.modal input:focus{outline:none;border-color:var(--orange)}
+.modal-btns{display:flex;gap:6px;justify-content:flex-end}
+.modal-cancel{border:.5px solid var(--border2);background:transparent;border-radius:var(--r);padding:6px 14px;font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit}
+.modal-confirm{background:var(--orange);border:none;border-radius:var(--r);padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;color:#fff;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo">SEO & Web Growth Toolkit · 2026</div>
+  <div class="hrow">
+    <div>
+      <h1>Framework Completo — 3 Fases</h1>
+      <p class="hsub">Auditoría · Implementación · Retainer Mensual · WordPress · GEO · E-E-A-T</p>
+    </div>
+  </div>
+</header>
+
+<!-- PROJECT SELECTOR -->
+<div class="project-bar">
+  <span class="project-label">📁 Proyecto:</span>
+  <select class="project-select" id="projectSelect" onchange="switchProject(this.value)">
+    <option value="">Cargando...</option>
+  </select>
+  <button class="project-add-btn" onclick="openAddProject()">+ Nuevo</button>
+  <button class="project-delete-btn" onclick="deleteProject()" id="deleteProjectBtn">Eliminar</button>
+  <span class="sync-status" id="syncStatus">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncText">Conectando...</span>
+  </span>
+</div>
+
+<!-- PHASE SWITCHER -->
+<div class="phase-bar">
+  <button class="phase-btn active" data-phase="1" onclick="switchPhase(1)">
+    🔍 Fase 1 — Mes 1
+    <span class="phase-label">Auditoría & fundación técnica</span>
+  </button>
+  <button class="phase-btn" data-phase="2" onclick="switchPhase(2)">
+    🏗 Fase 2 — Meses 2–4
+    <span class="phase-label">Implementación & autoridad</span>
+  </button>
+  <button class="phase-btn" data-phase="3" onclick="switchPhase(3)">
+    📈 Fase 3 — Mes 5+
+    <span class="phase-label">Retainer mensual</span>
+  </button>
+</div>
+
+<!-- GLOBAL PROGRESS -->
+<div class="gp">
+  <div class="gp-row">
+    <span class="gp-label" id="gpLabel">Progreso Fase 1</span>
+    <span class="gp-pct" id="gpPct" style="color:var(--phase1)">0%</span>
+  </div>
+  <div class="gp-bar"><div class="gp-fill" id="gpFill" style="width:0%;background:var(--phase1)"></div></div>
+  <div class="gp-detail" id="gpDetail">0 de 0 items completados</div>
+</div>
+
+<!-- ===================== FASE 1 ===================== -->
+<div class="phase-panel active" id="phase-1">
+  <div class="phase-header" style="background:var(--bg2);border-color:#e3670a44">
+    <div class="ph-top"><div class="ph-dot" style="background:var(--phase1)"></div><span class="ph-title">Fase 1 — Auditoría & Fundación Técnica</span></div>
+    <p class="ph-meta">El sitio debe cumplir estándares mínimos antes de ser lanzado al mercado. Sin esta base, cualquier esfuerzo de SEO futuro construye sobre arena. Entregable: diagnóstico priorizado + quick wins ejecutados.</p>
+    <div class="ph-tags">
+      <span class="ph-tag" style="background:#fdf0e7;color:#7a3200">Duración: Mes 1</span>
+      <span class="ph-tag" style="background:#fcebeb;color:#a32d2d">Precio fijo</span>
+      <span class="ph-tag" style="background:#e7f5e1;color:#1d6f42">Entregable concreto</span>
+    </div>
+  </div>
+  <div class="tab-bar" id="tabs-1"></div>
+  <div id="content-1"></div>
+</div>
+
+<!-- ===================== FASE 2 ===================== -->
+<div class="phase-panel" id="phase-2">
+  <div class="phase-header" style="background:var(--bg2);border-color:#0c447c44">
+    <div class="ph-top"><div class="ph-dot" style="background:var(--phase2)"></div><span class="ph-title">Fase 2 — Implementación & Construcción de Autoridad</span></div>
+    <p class="ph-meta">Ejecución profunda: E-E-A-T, schema completo, clústeres de contenido, GEO, Core Web Vitals avanzados. El cliente empieza a ver movimiento en rankings. Trabajo por sprints con entregables mensuales claros.</p>
+    <div class="ph-tags">
+      <span class="ph-tag" style="background:#e6f1fb;color:#0c447c">Duración: Meses 2–4</span>
+      <span class="ph-tag" style="background:#fdf0e7;color:#7a3200">Precio fijo o mensual con scope</span>
+      <span class="ph-tag" style="background:#e7f5e1;color:#1d6f42">Entregables por sprint</span>
+    </div>
+  </div>
+  <div class="tab-bar" id="tabs-2"></div>
+  <div id="content-2"></div>
+</div>
+
+<!-- ===================== FASE 3 ===================== -->
+<div class="phase-panel" id="phase-3">
+  <div class="phase-header" style="background:var(--bg2);border-color:#1d6f4244">
+    <div class="ph-top"><div class="ph-dot" style="background:var(--phase3)"></div><span class="ph-title">Fase 3 — Retainer Mensual (Mes 5+)</span></div>
+    <p class="ph-meta">Ya no se arreglan cosas rotas. Se opera el canal SEO como un activo de negocio: contenido, monitoreo, reporting, ajustes de algoritmo, link building progresivo. El valor se vende como gestión continua con KPIs visibles.</p>
+    <div class="ph-tags">
+      <span class="ph-tag" style="background:#e7f5e1;color:#1d6f42">Duración: Indefinida</span>
+      <span class="ph-tag" style="background:#e6f1fb;color:#0c447c">Precio mensual fijo</span>
+      <span class="ph-tag" style="background:#f5e9ff;color:#4a1f8c">Reporte mensual al cliente</span>
+    </div>
+  </div>
+
+  <!-- WEEK TABS -->
+  <div class="week-bar">
+    <button class="week-btn active" onclick="switchWeek(1)">Sem 1<span class="week-label">Monitoreo</span></button>
+    <button class="week-btn" onclick="switchWeek(2)">Sem 2<span class="week-label">Contenido</span></button>
+    <button class="week-btn" onclick="switchWeek(3)">Sem 3<span class="week-label">Técnico & Links</span></button>
+    <button class="week-btn" onclick="switchWeek(4)">Sem 4<span class="week-label">Reporte & Plan</span></button>
+    <button class="week-btn" onclick="switchWeek(5)">📊 KPIs<span class="week-label">Tracker</span></button>
+    <button class="week-btn" onclick="switchWeek(6)">📄 Reporte<span class="week-label">Para cliente</span></button>
+  </div>
+
+  <!-- SEMANA 1 -->
+  <div class="week-view active" id="week-1">
+    <div class="insight green"><strong>Semana 1 — Monitoreo y alertas tempranas:</strong> El primer lunes del mes revisás todo lo que pudo cambiar: GSC, rankings, velocidad, errores. Detectar problemas a tiempo evita que impacten en el reporte de fin de mes.</div>
+    <div id="w1-checklist"></div>
+  </div>
+
+  <!-- SEMANA 2 -->
+  <div class="week-view" id="week-2">
+    <div class="insight green"><strong>Semana 2 — Contenido y optimización on-page:</strong> El motor de crecimiento a largo plazo. Sin producción constante de contenido dentro de los clústeres definidos, el SEO se estanca después de los quick wins iniciales.</div>
+    <div id="w2-checklist"></div>
+  </div>
+
+  <!-- SEMANA 3 -->
+  <div class="week-view" id="week-3">
+    <div class="insight green"><strong>Semana 3 — Técnico y autoridad off-page:</strong> Mantenimiento técnico + acciones de link building progresivo. No todas las semanas habrá novedades acá, pero la revisión sistemática evita deuda técnica acumulada.</div>
+    <div id="w3-checklist"></div>
+  </div>
+
+  <!-- SEMANA 4 -->
+  <div class="week-view" id="week-4">
+    <div class="insight green"><strong>Semana 4 — Cierre y planificación:</strong> Cerrar el mes con datos, armar el reporte para el cliente y definir las prioridades del mes siguiente. Esta semana define la percepción de valor del cliente.</div>
+    <div id="w4-checklist"></div>
+  </div>
+
+  <!-- KPI TRACKER -->
+  <div class="week-view" id="week-5">
+    <div class="insight green"><strong>KPI Tracker mensual:</strong> Completá los valores del mes anterior y del mes actual. Los deltas se calculan automáticamente. Usá estos números para armar el reporte del cliente.</div>
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:.25rem">Los datos se guardan en esta sesión. Copiá los valores al reporte antes de cerrar.</div>
+  </div>
+
+  <!-- REPORT BUILDER -->
+  <div class="week-view" id="week-6">
+    <div class="insight green"><strong>Generador de reporte para cliente:</strong> Completá los campos y generá un reporte limpio, en lenguaje de negocio, listo para copiar y enviar. Sin jerga técnica innecesaria.</div>
+    <div class="report-section">
+      <div class="report-title">📄 Datos del reporte</div>
+      <div class="report-fields">
+        <div class="report-2col">
+          <div class="rf-field"><label>Nombre del cliente</label><input type="text" id="r-client" placeholder="Ej: Nueve Lagos Servicios Inmobiliarios"></div>
+          <div class="rf-field"><label>Mes del reporte</label><input type="text" id="r-month" placeholder="Ej: Mayo 2026"></div>
+        </div>
+        <div class="report-2col">
+          <div class="rf-field"><label>Tráfico orgánico anterior</label><input type="number" id="r-t-prev" placeholder="1240"></div>
+          <div class="rf-field"><label>Tráfico orgánico actual</label><input type="number" id="r-t-curr" placeholder="1480"></div>
+        </div>
+        <div class="report-2col">
+          <div class="rf-field"><label>Posición media anterior (GSC)</label><input type="number" id="r-pos-prev" placeholder="18.4" step="0.1"></div>
+          <div class="rf-field"><label>Posición media actual (GSC)</label><input type="number" id="r-pos-curr" placeholder="15.2" step="0.1"></div>
+        </div>
+        <div class="report-2col">
+          <div class="rf-field"><label>Impresiones anterior</label><input type="number" id="r-imp-prev" placeholder="8500"></div>
+          <div class="rf-field"><label>Impresiones actual</label><input type="number" id="r-imp-curr" placeholder="10200"></div>
+        </div>
+        <div class="report-2col">
+          <div class="rf-field"><label>Conversiones / leads anterior</label><input type="number" id="r-conv-prev" placeholder="12"></div>
+          <div class="rf-field"><label>Conversiones / leads actual</label><input type="number" id="r-conv-curr" placeholder="18"></div>
+        </div>
+        <div class="report-2col">
+          <div class="rf-field"><label>CTR anterior (%)</label><input type="number" id="r-ctr-prev" placeholder="3.2" step="0.1"></div>
+          <div class="rf-field"><label>CTR actual (%)</label><input type="number" id="r-ctr-curr" placeholder="3.8" step="0.1"></div>
+        </div>
+        <div class="rf-field"><label>Keywords en top 10 (este mes)</label><input type="text" id="r-kw" placeholder="Ej: 'inmobiliaria argentina' (pos 7), 'compra departamento mendoza' (pos 4)"></div>
+        <div class="rf-field"><label>¿Qué se hizo este mes? (resumen interno)</label><textarea id="r-done" placeholder="Ej: Publicamos 2 artículos del clúster 'inversión inmobiliaria', optimizamos 3 páginas de servicio, resolvimos error de crawlability en GSC..."></textarea></div>
+        <div class="rf-field"><label>Logros destacados para el cliente (lenguaje de negocio)</label><textarea id="r-wins" placeholder="Ej: El sitio recibe un 19% más de visitantes orgánicos que el mes pasado. La página de 'departamentos en venta' subió del puesto 18 al 9 en Google..."></textarea></div>
+        <div class="rf-field"><label>Prioridades del próximo mes</label><textarea id="r-next" placeholder="Ej: Publicar 2 artículos del clúster 'barrios de Mendoza', iniciar outreach para 3 backlinks de portales inmobiliarios, revisar CWV mobile tras actualización de Elementor..."></textarea></div>
+        <div class="rf-field">
+          <label>Estado general del proyecto</label>
+          <select id="r-status">
+            <option value="verde">🟢 En curso — progreso sostenido</option>
+            <option value="amarillo">🟡 Atención — algunos indicadores planos</option>
+            <option value="rojo">🔴 Revisión necesaria — caída o problema detectado</option>
+          </select>
+        </div>
+      </div>
+      <button class="gen-btn" onclick="generateReport()">Generar reporte para cliente →</button>
+    </div>
+
+    <div class="report-output" id="reportOutput">
+      <div class="ro-header">
+        <div class="ro-title" id="ro-title">Reporte SEO — Mayo 2026</div>
+        <div class="ro-sub" id="ro-sub">Preparado por SEO & Web Growth Specialist</div>
+      </div>
+      <div class="ro-body">
+        <div class="ro-section">
+          <div class="ro-section-title">Resumen del mes</div>
+          <div id="ro-summary" class="ro-text"></div>
+        </div>
+        <div class="ro-section">
+          <div class="ro-section-title">Métricas clave</div>
+          <div id="ro-metrics"></div>
+        </div>
+        <div class="ro-section">
+          <div class="ro-section-title">Posicionamiento destacado</div>
+          <div id="ro-kw" class="ro-text"></div>
+        </div>
+        <div class="ro-section">
+          <div class="ro-section-title">Logros del mes</div>
+          <div id="ro-wins" class="ro-text"></div>
+        </div>
+        <div class="ro-section">
+          <div class="ro-section-title">Plan del próximo mes</div>
+          <div id="ro-next" class="ro-text"></div>
+        </div>
+        <button class="copy-btn" id="copyBtn" onclick="copyReport()">Copiar reporte al portapapeles</button>
+      </div>
+    </div>
+  </div>
+</div><!-- end phase-3 -->
+
+<!-- LEGEND -->
+<div class="legend">
+  <span style="font-size:10.5px;font-weight:700;color:var(--text2);margin-right:3px">Tags:</span>
+  <span><span class="ctag t-crit">Crítico</span> bloqueante</span>
+  <span><span class="ctag t-strat">Estratégico</span> alto impacto</span>
+  <span><span class="ctag t-qw">Quick win</span> rápido visible</span>
+  <span><span class="ctag t-deep">Profundo</span> avanzado</span>
+  <span><span class="ctag t-new">Nuevo 2025</span></span>
+  <span><span class="ctag t-month">Mensual</span> recurrente</span>
+</div>
+
+<!-- MODAL: ADD PROJECT -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Nuevo proyecto</h3>
+    <p>Ingresá el nombre del proyecto o cliente. Se va a crear un espacio de progreso independiente.</p>
+    <input type="text" id="modalInput" placeholder="Ej: Nueve Lagos, importify.net, peakcore.dev" maxlength="60">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="modal-confirm" onclick="confirmAddProject()">Crear proyecto</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end wrap -->
+<script>
+/* ================================================================
+   SUPABASE CONFIG
+   ================================================================ */
+const SUPABASE_URL='https://mrzxdqbxythnbsyjfkbm.supabase.co';
+const SUPABASE_KEY='sb_publishable_x3AyTBQDPs31-VXlYUXGUQ_4T6AFFvT';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+/* ================================================================
+   STATE
+   ================================================================ */
+const STORE={};
+let currentPhase=1;
+let currentProject='default';
+let projects=[];
+let syncTimeout=null;
+
+/* ================================================================
+   SYNC STATUS UI
+   ================================================================ */
+function setSyncStatus(state,text){
+  const dot=document.getElementById('syncDot');
+  const txt=document.getElementById('syncText');
+  dot.className='sync-dot '+state;
+  txt.textContent=text;
+}
+
+/* ================================================================
+   PROJECT MANAGEMENT
+   ================================================================ */
+async function loadProjects(){
+  setSyncStatus('syncing','Conectando...');
+  try{
+    const{data,error}=await sb.from('toolkit_progress').select('user_id').neq('user_id','__projects__');
+    // Load from a dedicated projects list stored as a special record
+    const{data:pdata}=await sb.from('toolkit_progress')
+      .select('item_key')
+      .eq('user_id','__projects__');
+
+    if(pdata&&pdata.length>0){
+      projects=pdata.map(r=>r.item_key);
+    } else {
+      // First time: create default project
+      projects=['nueve_lagos'];
+      await sb.from('toolkit_progress').upsert(
+        projects.map(p=>({user_id:'__projects__',item_key:p,is_done:true})),
+        {onConflict:'user_id,item_key'}
+      );
+    }
+    renderProjectSelect();
+    await switchProject(projects[0]);
+    setSyncStatus('ok','Sincronizado');
+  } catch(e){
+    setSyncStatus('error','Sin conexión');
+    // Fallback to localStorage
+    const stored=localStorage.getItem('toolkit_projects');
+    projects=stored?JSON.parse(stored):['mi_proyecto'];
+    renderProjectSelect();
+    switchProjectLocal(projects[0]);
+  }
+}
+
+function renderProjectSelect(){
+  const sel=document.getElementById('projectSelect');
+  const projectLabels={
+    'nueve_lagos':'Nueve Lagos',
+    'importify':'importify.net',
+    'peakcore':'peakcore.dev',
+    'vivirenpatagonia':'vivirenpatagonia.com.ar',
+    'meliquina':'meliquinapatagonia.com.ar',
+    'servibosch':'servibosch.com.ar',
+    'fgmarquitectura':'fgmarquitectura.com.ar',
+    'chj':'chjbienesraices.com.ar'
+  };
+  sel.innerHTML=projects.map(p=>`<option value="${p}" ${p===currentProject?'selected':''}>${projectLabels[p]||p}</option>`).join('');
+}
+
+function openAddProject(){
+  document.getElementById('modalOverlay').classList.add('active');
+  document.getElementById('modalInput').value='';
+  setTimeout(()=>document.getElementById('modalInput').focus(),100);
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+async function confirmAddProject(){
+  const name=document.getElementById('modalInput').value.trim();
+  if(!name)return;
+  // Create slug from name
+  const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  if(projects.includes(slug)){
+    alert('Ya existe un proyecto con ese nombre');return;
+  }
+  projects.push(slug);
+  // Save project list
+  try{
+    await sb.from('toolkit_progress').upsert(
+      [{user_id:'__projects__',item_key:slug,is_done:true}],
+      {onConflict:'user_id,item_key'}
+    );
+    localStorage.setItem('toolkit_projects',JSON.stringify(projects));
+  } catch(e){}
+  renderProjectSelect();
+  closeModal();
+  await switchProject(slug);
+}
+
+async function deleteProject(){
+  if(projects.length<=1){alert('Debe quedar al menos un proyecto.');return;}
+  if(!confirm(`¿Eliminar el proyecto "${currentProject}" y todo su progreso? Esta acción no se puede deshacer.`))return;
+  try{
+    setSyncStatus('syncing','Eliminando...');
+    await sb.from('toolkit_progress').delete().eq('user_id',currentProject);
+    await sb.from('toolkit_kpis').delete().eq('user_id',currentProject);
+    await sb.from('toolkit_progress').delete().eq('user_id','__projects__').eq('item_key',currentProject);
+    projects=projects.filter(p=>p!==currentProject);
+    localStorage.setItem('toolkit_projects',JSON.stringify(projects));
+    // Clear local store for this project
+    Object.keys(STORE).forEach(k=>{if(k.startsWith(currentProject+'_'))delete STORE[k];});
+    renderProjectSelect();
+    await switchProject(projects[0]);
+    setSyncStatus('ok','Sincronizado');
+  } catch(e){
+    setSyncStatus('error','Error al eliminar');
+  }
+}
+
+/* ================================================================
+   LOAD / SAVE PROGRESS
+   ================================================================ */
+async function switchProject(projectId){
+  currentProject=projectId;
+  renderProjectSelect();
+  setSyncStatus('syncing','Cargando...');
+  try{
+    // Load checklist progress
+    const{data:rows,error}=await sb.from('toolkit_progress')
+      .select('item_key,is_done')
+      .eq('user_id',projectId);
+    if(!error&&rows){
+      rows.forEach(r=>{STORE[`${projectId}_${r.item_key}`]=r.is_done;});
+    }
+    // Load KPI data
+    const{data:krows}=await sb.from('toolkit_kpis')
+      .select('month_key,kpi_id,field_index,prev_value,curr_value')
+      .eq('user_id',projectId);
+    if(krows){
+      krows.forEach(r=>{
+        STORE[`kpi_${projectId}_${r.month_key}_${r.kpi_id}_${r.field_index}`]={prev:r.prev_value,curr:r.curr_value};
+      });
+    }
+    setSyncStatus('ok','Sincronizado');
+  } catch(e){
+    setSyncStatus('error','Usando caché local');
+    // Fallback: load from localStorage
+    const local=localStorage.getItem(`toolkit_${projectId}`);
+    if(local){const d=JSON.parse(local);Object.assign(STORE,d);}
+  }
+  // Re-render everything
+  reRenderAll();
+}
+
+function switchProjectLocal(projectId){
+  currentProject=projectId;
+  renderProjectSelect();
+  const local=localStorage.getItem(`toolkit_${projectId}`);
+  if(local){const d=JSON.parse(local);Object.assign(STORE,d);}
+  reRenderAll();
+}
+
+function reRenderAll(){
+  // Re-render phase 1
+  PHASE1.forEach((stage,i)=>{
+    const el=document.getElementById(`content-1-stage-${i}`);
+    if(el)el.innerHTML=buildStage(1,stage);
+  });
+  // Re-render phase 2
+  PHASE2.forEach((stage,i)=>{
+    const el=document.getElementById(`content-2-stage-${i}`);
+    if(el)el.innerHTML=buildStage(2,stage);
+  });
+  // Re-render weekly checklists
+  document.getElementById('w1-checklist').innerHTML=buildWeekChecklist(WEEKLY.w1,1);
+  document.getElementById('w2-checklist').innerHTML=buildWeekChecklist(WEEKLY.w2,2);
+  document.getElementById('w3-checklist').innerHTML=buildWeekChecklist(WEEKLY.w3,3);
+  document.getElementById('w4-checklist').innerHTML=buildWeekChecklist(WEEKLY.w4,4);
+  // Restore KPI inputs
+  restoreKPIInputs();
+  updateGP();
+}
+
+async function saveItem(itemKey,isDone){
+  // Save to localStorage immediately (instant feedback)
+  const localKey=`${currentProject}_${itemKey}`;
+  STORE[localKey]=isDone;
+  const localData=JSON.parse(localStorage.getItem(`toolkit_${currentProject}`)||'{}');
+  localData[localKey]=isDone;
+  localStorage.setItem(`toolkit_${currentProject}`,JSON.stringify(localData));
+  // Debounce Supabase write
+  setSyncStatus('syncing','Guardando...');
+  clearTimeout(syncTimeout);
+  syncTimeout=setTimeout(async()=>{
+    try{
+      await sb.from('toolkit_progress').upsert(
+        [{user_id:currentProject,item_key:itemKey,is_done:isDone,updated_at:new Date().toISOString()}],
+        {onConflict:'user_id,item_key'}
+      );
+      setSyncStatus('ok','Guardado ✓');
+      setTimeout(()=>setSyncStatus('ok','Sincronizado'),2000);
+    } catch(e){
+      setSyncStatus('error','Error al guardar');
+    }
+  },600);
+}
+
+async function saveKPI(monthKey,kpiId,fieldIndex,prevVal,currVal){
+  const storeKey=`kpi_${currentProject}_${monthKey}_${kpiId}_${fieldIndex}`;
+  STORE[storeKey]={prev:prevVal,curr:currVal};
+  setSyncStatus('syncing','Guardando...');
+  clearTimeout(syncTimeout);
+  syncTimeout=setTimeout(async()=>{
+    try{
+      await sb.from('toolkit_kpis').upsert(
+        [{user_id:currentProject,month_key:monthKey,kpi_id:kpiId,field_index:fieldIndex,prev_value:prevVal||null,curr_value:currVal||null,updated_at:new Date().toISOString()}],
+        {onConflict:'user_id,month_key,kpi_id,field_index'}
+      );
+      setSyncStatus('ok','Guardado ✓');
+      setTimeout(()=>setSyncStatus('ok','Sincronizado'),2000);
+    } catch(e){
+      setSyncStatus('error','Error al guardar');
+    }
+  },800);
+}
+
+/* ================================================================
+   KEY HELPERS — now project-scoped
+   ================================================================ */
+function key(phase,id,si,ci){return `p${phase}_${id}_${si}_${ci}`}
+function getStoreVal(rawKey){return STORE[`${currentProject}_${rawKey}`]||false}
+
+/* ================================================================
+   KPI RESTORE
+   ================================================================ */
+function restoreKPIInputs(){
+  const monthKey=getCurrentMonthKey();
+  KPIS.forEach(kpi=>{
+    kpi.fields.forEach((f,fi)=>{
+      const storeKey=`kpi_${currentProject}_${monthKey}_${kpi.id}_${fi}`;
+      const saved=STORE[storeKey];
+      if(saved){
+        const prevEl=document.getElementById(`kpi_${kpi.id}_prev_${fi}`);
+        const currEl=document.getElementById(`kpi_${kpi.id}_curr_${fi}`);
+        if(prevEl&&saved.prev!=null)prevEl.value=saved.prev;
+        if(currEl&&saved.curr!=null)currEl.value=saved.curr;
+        if(prevEl&&currEl)calcDelta(kpi.id,fi,`kpi_${kpi.id}_prev_${fi}`,`kpi_${kpi.id}_curr_${fi}`,`delta_${kpi.id}_${fi}`,kpi.lower_is_better||false);
+      }
+    });
+  });
+}
+
+function getCurrentMonthKey(){
+  const now=new Date();
+  return`${now.getFullYear()}_${String(now.getMonth()+1).padStart(2,'0')}`;
+}
+
+/* ================================================================
+   MODAL KEYBOARD
+   ================================================================ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeModal();
+  if(e.key==='Enter'&&document.getElementById('modalOverlay').classList.contains('active'))confirmAddProject();
+});
+document.getElementById('modalOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modalOverlay'))closeModal();
+});
+const STORE={};
+let currentPhase=1;
+
+/* ================================================================
+   FASE 1 DATA — Auditoría & Fundación Técnica (Mes 1)
+   ================================================================ */
+const PHASE1=[
+{id:'p1_visual',label:'Percepción visual',badge:'1A',
+ptag:'pt-visual',ptext:'Quick wins primero',
+sub:'El cliente ve si el sitio se ve caro o barato antes de entender ninguna métrica. Esta etapa define la primera impresión y genera confianza rápida.',
+insight:'Empezá acá siempre. Los quick wins visuales generan confianza inmediata y te dan crédito para trabajar las etapas técnicas.',
+devtools:[{p:'Responsive Mode',u:'375, 390, 428px — overflow, saltos, botones cortados'},{p:'Elements',u:'Spacing real entre secciones. CSS inspector'},{p:'Lighthouse',u:'Accessibility score: contraste, alt text, labels'},{p:'Network',u:'Tamaño real de imágenes vs dimensión mostrada'}],
+sections:[
+{l:'Responsive & layout',items:[
+{t:'Overflow horizontal en mobile',w:'Error crítico. Padding/width roto. Se detecta en 10 segundos.',g:['crit']},
+{t:'Espaciado inconsistente entre secciones',w:'Primer síntoma de sitio sin sistema de diseño.',g:['qw']},
+{t:'Botones con texto cortado o muy pequeños en mobile (<44px tap target)',w:'CTA cortado = conversión perdida.',g:['crit']},
+{t:'Imágenes estiradas, pixeladas o mal proporcionadas',w:'Killer de percepción premium. Quick win: reemplazar imagen.',g:['qw']},
+{t:'Hero section funcional y legible en 375px',w:'60%+ del tráfico es mobile. El hero es la primera impresión.',g:['crit']}
+]},
+{l:'Tipografía & jerarquía',items:[
+{t:'Jerarquía H1→H2→body legible y consistente',w:'Sin jerarquía el ojo no sabe qué leer primero.',g:['qw']},
+{t:'Contraste de texto ≥4.5:1 (testear en Lighthouse Accessibility)',w:'Texto gris claro sobre fondo blanco = perder lectores.',g:['qw']},
+{t:'Font-size consistente entre páginas (sin saltos raros)',w:'Señal de sitio construido sin sistema.',g:['qw']},
+{t:'Line-height para lectura (1.5–1.8)',w:'Texto apretado reduce tiempo de lectura y percepción de calidad.',g:['qw']}
+]},
+{l:'Consistencia UI & señales de calidad',items:[
+{t:'Paleta de colores consistente (≤3 colores principales)',w:'Más colores = sitio caótico visualmente.',g:['qw']},
+{t:'Estilo de botones uniforme en todo el sitio',w:'Botones distintos en cada sección revelan construcción sin sistema.',g:['qw']},
+{t:'Sin textos placeholder (Lorem ipsum, "Title here")',w:'Red flag inmediato para cualquier visitante.',g:['crit']},
+{t:'Sin broken images',w:'Cuadrado vacío = falta de QA básico.',g:['crit']},
+{t:'Footer completo con info de contacto/legal',w:'Footer vacío o genérico = percepción de abandono.',g:['qw']}
+]}
+],
+rf:['H1 gigante en desktop que se rompe en 3 líneas en mobile','Hero con imagen de stock genérica (personas apuntando a laptops)','Footer con widgets de WordPress sin estilo','Elementor widget visible sin CSS aplicado','Botones sin estado hover visible']},
+
+{id:'p1_ux',label:'UX & conversión',badge:'1B',
+ptag:'pt-ux',ptext:'Impacto en conversión',
+sub:'Una web puede verse bien pero no convertir nada. Esta etapa evalúa si la estructura ayuda o dificulta que el usuario tome acción.',
+insight:'Antes de abrir DevTools: navegá el sitio como si fueras el buyer persona del cliente. El 80% de los problemas de conversión se detectan así.',
+devtools:[{p:'Elements',u:'Orden real de headings, estructura semántica del DOM'},{p:'Lighthouse',u:'Accessibility: CTAs sin label, links genéricos, forms sin label'},{p:'Responsive',u:'¿El CTA principal está above the fold en mobile?'},{p:'Console',u:'Errores JS que bloqueen formularios o interacciones'}],
+sections:[
+{l:'Propuesta de valor & CTAs',items:[
+{t:'¿Qué hace el sitio se entiende en ≤5 segundos?',w:'Si hay que scrollear para entender el negocio, el bounce rate sube.',g:['crit']},
+{t:'H1 describe lo que hace la empresa (no slogan vacío)',w:'"Transformamos tu futuro" no dice nada. "Gestión inmobiliaria en Mendoza" sí.',g:['qw']},
+{t:'CTA principal visible above the fold',w:'Si el usuario tiene que scrollear para encontrar cómo contactar, se va.',g:['crit']},
+{t:'Trust signals visibles: reviews, certificaciones, logos de clientes',w:'Sin trust signals el tráfico frío no convierte. Lo primero que busca un buyer.',g:['qw']}
+]},
+{l:'Navegación & arquitectura',items:[
+{t:'Menú con ≤7 ítems principales (Miller\'s Law)',w:'Más de 7 opciones paraliza la decisión.',g:['qw']},
+{t:'Links rotos o que no llevan a donde prometen',w:'Detectar con Network: 404s al navegar normalmente.',g:['crit']},
+{t:'Menú hamburguesa funciona y cierra en mobile',w:'Bug más común de Elementor. Testear manualmente.',g:['crit']},
+{t:'Sin página 404 personalizada',w:'El 404 por defecto de WordPress expulsa al usuario.',g:['qw']}
+]},
+{l:'Flujo de conversión',items:[
+{t:'Formulario de contacto funcional y testeado (enviar uno real)',w:'Formularios rotos = pérdida directa de leads. Testear siempre manualmente.',g:['crit']},
+{t:'Página de gracias configurada tras envío de formulario',w:'Sin thank you page no podés trackear conversiones en GA4.',g:['crit']},
+{t:'Número de pasos hasta conversión mapeado',w:'Cada paso extra reduce conversión ~20%. Mapear el funnel completo.',g:['strat']}
+]},
+{l:'Accesibilidad básica',items:[
+{t:'Imágenes con alt text descriptivo',w:'Doble impacto: accesibilidad + SEO de imágenes.',g:['qw']},
+{t:'Links no dicen "click aquí" o "más información"',w:'Inútil para screen readers y para SEO (anchor text vacío).',g:['qw']},
+{t:'Focus visible al navegar con Tab (sin mouse)',w:'Requerido WCAG. Testear: Tab por todo el sitio.',g:['qw']}
+]}
+],
+rf:['Homepage sin CTA claro (solo "conócenos")','Formulario que muestra error PHP al enviar','Menú con 12+ ítems al mismo nivel de jerarquía','Blog en navegación pero sin posts reales','Sin formulario de contacto en la homepage']},
+
+{id:'p1_perf',label:'Performance & CWV',badge:'1C',
+ptag:'pt-perf',ptext:'Core Web Vitals',
+sub:'Objetivo: LCP <2.5s · CLS <0.1 · INP <200ms. Sin estos números, Google penaliza el sitio en rankings. Y el usuario lo abandona.',
+insight:'No optimizás el score de PageSpeed. Optimizás la experiencia percibida. Un sitio con 65 que se siente rápido convierte mejor que uno con 90 que se siente lento.',
+devtools:[{p:'Lighthouse (Incognito)',u:'LCP, CLS, INP, FCP. Siempre en modo incógnito, mobile.'},{p:'Network > Slow 4G',u:'Throttle para simular condiciones reales. Waterfall de carga.'},{p:'Performance tab',u:'Recording de carga: Long Tasks en rojo = main thread bloqueado'},{p:'Coverage',u:'% rojo = CSS/JS sin usar. Código muerto que frena la carga.'}],
+sections:[
+{l:'LCP — Largest Contentful Paint (<2.5s)',items:[
+{t:'Identificar el elemento LCP exacto en Lighthouse',w:'No podés optimizarlo si no sabés qué es. Lighthouse lo señala.',g:['crit']},
+{t:'Hero image: WebP/AVIF, max 200KB, dimensiones correctas',w:'JPEG de 4MB en el hero = killer de LCP más común en WordPress.',g:['crit']},
+{t:'Hero image con fetchpriority="high" o <link rel="preload">',w:'Le dice al browser "cargá esto antes que todo". Mejora LCP sin tocar servidor.',g:['qw']},
+{t:'Sin render-blocking resources antes del LCP element',w:'Lighthouse > Opportunities: "Eliminate render-blocking resources".',g:['deep']}
+]},
+{l:'CLS — Cumulative Layout Shift (<0.1)',items:[
+{t:'Imágenes con width y height definidos en HTML (o CSS aspect-ratio)',w:'Sin dimensiones el browser no reserva espacio. Layout jump al cargar. Error #1 de Elementor.',g:['crit']},
+{t:'Google Fonts con font-display:swap o self-hosted',w:'Texto invisible que aparece = CLS. Preload + swap o auto-host.',g:['qw']},
+{t:'Embeds (YouTube, maps) con dimensiones fijas reservadas',w:'Embeds sin placeholder causan layout jumps visibles.',g:['qw']}
+]},
+{l:'INP — Interaction to Next Paint (<200ms) ★ nuevo 2024',items:[
+{t:'INP medido y evaluado (reemplazó a FID como Core Web Vital)',w:'Mide la respuesta a TODA interacción del usuario. Más exigente que FID.',g:['crit','new']},
+{t:'Elementor Motion Effects / Parallax desactivados o limitados',w:'Parallax usa JS continuo. Impacta INP y consume batería en mobile.',g:['qw']},
+{t:'Scripts de terceros evaluados: chat, pop-ups, tracking',w:'Intercom/HubSpot chat pueden agregar 1-3s de bloqueo al thread.',g:['deep']}
+]},
+{l:'Recursos & Elementor',items:[
+{t:'Imágenes >100KB en viewport inicial identificadas y optimizadas',w:'Network > filtro Images. Tamaño real vs dimensión mostrada.',g:['crit']},
+{t:'Lazy load activo en imágenes below the fold',w:'WordPress 5.5+ lo hace nativamente con loading="lazy".',g:['qw']},
+{t:'Elementor: activar "Improved Asset Loading" en Settings > General',w:'Carga CSS solo de los widgets presentes en cada página. Gran impacto.',g:['deep']},
+{t:'Google Fonts: preconnect o self-hosted (eliminar carga externa)',w:'Fonts de Google agregan 300-500ms en primera visita.',g:['qw']}
+]}
+],
+rf:['LCP >4s en Lighthouse mobile','JPEG de 2MB+ como background de hero','Google Fonts cargando 5 weights distintos','Elementor Parallax en cada sección','Slider Revolution con autoplay y múltiples slides en homepage']},
+
+{id:'p1_seo',label:'SEO técnico base',badge:'1D',
+ptag:'pt-seo',ptext:'Fundación SEO',
+sub:'La base técnica que permite a Google rastrear, renderizar e indexar el sitio. Sin esto, el contenido no rankea por más que esté bien escrito.',
+insight:'Un sitio listo para lanzar debe cumplir estos checks. No es optimización avanzada — es el mínimo aceptable para competir en búsqueda orgánica.',
+devtools:[{p:'View Source (Ctrl+U)',u:'Metadatos, canonicals, schema. Ver HTML real, no renderizado.'},{p:'Lighthouse SEO tab',u:'Robots, metadatos, legibilidad, hreflang'},{p:'Network',u:'Verificar redirects: deben ser 301, no 302'},{p:'Elements > DOM',u:'H1 real (Elementor puede generar H1 diferente al visual)'}],
+sections:[
+{l:'Indexación y rastreabilidad',items:[
+{t:'HTTP→HTTPS con redirección 301. www/no-www consistente',w:'Un solo canonical de dominio. Sin esto hay contenido duplicado.',g:['crit']},
+{t:'Robots.txt sin bloqueos incorrectos (no bloquear /wp-content/)',w:'WordPress puede bloquear CSS/JS que Google necesita para renderizar.',g:['crit']},
+{t:'Sitemap XML generado y enviado a Google Search Console',w:'Rank Math/Yoast lo generan automático. Enviarlo a GSC.',g:['crit']},
+{t:'Sin páginas críticas en noindex accidental',w:'Elementor Maintenance Mode puede dejar todo el sitio en noindex.',g:['crit']},
+{t:'GSC verificado y sin errores de cobertura activos',w:'Primera conexión con Google. Sin GSC, trabajás a ciegas.',g:['crit']}
+]},
+{l:'On-page básico',items:[
+{t:'Un H1 por página con descripción clara del contenido',w:'Múltiples H1 confunden a Google sobre el tema de la página.',g:['crit']},
+{t:'Title tags únicos por página (50-60 chars)',w:'Title duplicado en todas las páginas = señal de baja calidad.',g:['crit']},
+{t:'Meta descriptions presentes y únicas (120-160 chars)',w:'No ranking factor directo pero impacta el CTR en SERP.',g:['strat']},
+{t:'URLs limpias con keyword principal (no ?page_id=34)',w:'WordPress Permalinks configurado en /%postname%/',g:['crit']},
+{t:'Sin dos plugins SEO activos simultáneamente (Yoast + Rank Math)',w:'Generan metadatos duplicados. Error de principiante con consecuencias reales.',g:['crit']}
+]},
+{l:'Schema básico obligatorio',items:[
+{t:'Schema Organization (o LocalBusiness) en homepage',w:'Conecta la entidad empresa con el Knowledge Graph de Google.',g:['strat']},
+{t:'Schema BreadcrumbList en páginas internas',w:'Genera breadcrumbs en snippets de Google.',g:['qw']},
+{t:'Schema validado en rich.results.test.google.com',w:'Schema mal formado no genera rich snippets.',g:['strat']}
+]},
+{l:'Analytics setup',items:[
+{t:'GA4 configurado con data retention extendida a 14 meses',w:'Default de GA4 es 2 meses. Cambiar en Admin > Data Settings.',g:['crit']},
+{t:'Google Search Console conectado y verificado',w:'Sin GSC no hay visibilidad de cómo Google ve el sitio.',g:['crit']},
+{t:'Conversiones básicas configuradas: formularios, clicks en tel.',w:'Sin conversiones en GA4, el cliente no puede medir ROI del SEO.',g:['crit']},
+{t:'GTM instalado para tracking centralizado',w:'Permite agregar eventos sin tocar código. Esencial para mantenibilidad.',g:['strat']}
+]}
+],
+rf:['Sin HTTPS o mixed content en páginas de conversión','Title tag = nombre del sitio en TODAS las páginas (defecto WordPress)','Staging site indexado por Google (sin noindex en staging)','Sin GSC conectado al momento del lanzamiento','GA4 instalado pero sin ninguna conversión configurada']}
+];
+
+/* ================================================================
+   FASE 2 DATA — Implementación & Autoridad (Meses 2-4)
+   ================================================================ */
+const PHASE2=[
+{id:'p2_eeat',label:'E-E-A-T & Entidades',badge:'2A',
+ptag:'pt-eeat',ptext:'Crítico 2025–2026',
+sub:'La diferencia más importante entre SEO 2022 y SEO 2026. Sin autoridad de entidad demostrable, el sitio compite en desventaja estructural contra competidores que sí la tienen.',
+insight:'Desde el broad core update de diciembre 2025, E-E-A-T opera a nivel de página individual. Un artículo sin autoría verificable puede suprimir su propio ranking aunque el resto del sitio sea sólido.',
+sections:[
+{l:'Identidad de la entidad',items:[
+{t:'Schema Organization con: name, url, logo, sameAs (LinkedIn, directorios)',w:'El sameAs conecta la entidad del sitio con perfiles verificables en la web.',g:['crit','new']},
+{t:'Página About completa: quién son, qué hacen, por qué son la fuente correcta',w:'Google Quality Raters evalúan la página About como señal de confianza primaria.',g:['crit']},
+{t:'Consistencia de nombre de entidad en todas las plataformas',w:'Sitio, LinkedIn, GBP, directorios: mismo nombre exacto.',g:['crit','new']},
+{t:'Google Knowledge Panel reclamado y verificado (si aplica)',w:'Fortalece la entity confidence del dominio.',g:['strat','new']}
+]},
+{l:'Autoría en WordPress',items:[
+{t:'Páginas de autor configuradas e indexadas (no en noindex)',w:'Google evalúa la página de autor para verificar credenciales del creador.',g:['crit','new']},
+{t:'Author bio con: nombre real, foto real, credenciales, área de expertise',w:'Sin bio verificable, el contenido no tiene "Experience" demostrable.',g:['crit','new']},
+{t:'Schema Person en autor: knowsAbout, jobTitle, sameAs (LinkedIn)',w:'Estructura el grafo de entidades. Conecta al autor con su expertise.',g:['crit','new']},
+{t:'Rank Math: configurar Author SEO desde Users → Profile',w:'Genera schema Person automáticamente con los datos del perfil WP.',g:['strat','new']},
+{t:'Link desde bio del autor hacia LinkedIn y perfiles verificables',w:'Links salientes a fuentes de alta autoridad refuerzan la credibilidad.',g:['strat','new']}
+]},
+{l:'Trust signals',items:[
+{t:'Política de privacidad y términos actualizados y accesibles',w:'Google Quality Raters la chequean como señal de confianza primaria.',g:['strat']},
+{t:'Página de contacto con datos reales (no solo formulario)',w:'Dirección, teléfono, email real = señales de entidad física verificable.',g:['strat']},
+{t:'Testimonios/reviews con schema Review o AggregateRating',w:'Rich snippets de reviews aumentan CTR y demuestran experiencia real.',g:['qw']},
+{t:'Fecha de publicación y última actualización visible en artículos',w:'Freshness signal. Sin fecha el contenido parece generado por AI.',g:['strat','new']}
+]},
+{l:'Citas y fuentes',items:[
+{t:'Citar fuentes primarias: estudios, datos oficiales, fuentes verificables',w:'Citation density alta = señal de contenido basado en evidencia.',g:['strat','new']},
+{t:'Crear contenido original: datos propios, casos de estudio, resultados reales',w:'Contenido original crea el flywheel: referencias → autoridad → más visibilidad.',g:['deep','new']}
+]}
+],
+rf:['Posts sin autor o con autor "admin"','Página About genérica con solo la misión de la empresa','Sin schema Person en páginas de autor','Contenido YMYL sin credenciales del autor visibles','Bio de autor sin links a perfiles verificables']},
+
+{id:'p2_geo',label:'GEO / AI Search',badge:'2B',
+ptag:'pt-geo',ptext:'Nuevo · 2025–2026',
+sub:'Optimización para que ChatGPT, Perplexity, Google AI Overviews y Gemini citen y recomienden el contenido. En 2025 el 60% de búsquedas terminaron sin click.',
+insight:'GEO no reemplaza SEO tradicional, lo complementa. El contenido bien estructurado para GEO también mejora SEO clásico. La buena noticia: si ya hacés buen SEO on-page, el 70% del trabajo de GEO ya está hecho.',
+sections:[
+{l:'Estructura de contenido AI-ready',items:[
+{t:'Respuesta directa en los primeros 100 words (BLUF: Bottom Line Up Front)',w:'AI no navega, extrae. Si la respuesta está en el párrafo 6, no es citado.',g:['crit','new']},
+{t:'Preguntas reales como headings H2/H3',w:'Coinciden con lo que los usuarios escriben en ChatGPT y Perplexity.',g:['crit','new']},
+{t:'Formato: definición + explicación + ejemplo en cada sección',w:'Patrón que los LLMs extraen mejor. Predecible = citeable.',g:['strat','new']},
+{t:'FAQs con schema FAQPage en páginas informacionales',w:'Aumenta elegibilidad para AI Overviews y People Also Ask.',g:['strat']},
+{t:'Tablas comparativas para queries tipo "X vs Y"',w:'Las tablas son fáciles de extraer y citar para los modelos de AI.',g:['strat','new']}
+]},
+{l:'Topical Authority & clústeres',items:[
+{t:'Definir 4-8 tópicos core y construir pillar page por cada uno',w:'Sin topical authority clara, Google no te considera fuente definitiva.',g:['crit','new']},
+{t:'Content clusters: cada pillar con 5-15 posts satélite de subtemas',w:'Red de autoridad semántica. Google valora cobertura profunda.',g:['crit','new']},
+{t:'Cada post satélite linkea al pillar y viceversa',w:'La red interna define la topical authority para el Knowledge Graph.',g:['strat','new']},
+{t:'Terminología consistente en todo el sitio',w:'Consistencia de términos específicos construye entity confidence.',g:['strat','new']},
+{t:'Auditar gaps del clúster: ¿hay subtemas sin cubrir?',w:'Un clúster incompleto limita la autoridad del pillar page.',g:['deep','new']}
+]},
+{l:'Entidades & monitoreo AI',items:[
+{t:'Usar nombres específicos (ej: "WP Rocket" no "el plugin de caché")',w:'Precisión de entidades = mejor comprensión por Google y LLMs.',g:['strat','new']},
+{t:'Mencionar entidades relacionadas: marcas, personas, lugares relevantes',w:'El contexto de entidades refuerza el Knowledge Graph del sitio.',g:['strat','new']},
+{t:'Configurar alerts para menciones de marca en Perplexity y ChatGPT',w:'La visibilidad en AI search no aparece en GA4. Requiere monitoreo activo.',g:['deep','new']}
+]}
+],
+rf:['Contenido que responde la pregunta en el párrafo 8','Sin topical clusters definidos (contenido aislado)','H2s que no son preguntas ni frases buscables','Cero contenido original (solo rewriting)','Sin FAQ schema en páginas informacionales']},
+
+{id:'p2_schema',label:'Schema avanzado',badge:'2C',
+ptag:'pt-schema',ptext:'Lenguaje de los LLMs',
+sub:'Schema markup es la infraestructura que conecta el sitio con el Knowledge Graph de Google y determina cómo los LLMs entienden relaciones entre entidades.',
+insight:'Schema no es solo rich snippets. Es el lenguaje que le explica a Google y a los modelos de AI qué es cada entidad del sitio y cómo se relacionan entre sí.',
+sections:[
+{l:'Schema por tipo de página',items:[
+{t:'Organization + sameAs completo en homepage',w:'Conecta la entidad empresa con el Knowledge Graph.',g:['crit']},
+{t:'Person (knowsAbout, sameAs) en páginas de autor',w:'Conecta al autor con su área de expertise.',g:['crit','new']},
+{t:'Article/BlogPosting (author, datePublished, dateModified) en posts',w:'Señala freshness y autoría. Importante para E-E-A-T.',g:['strat','new']},
+{t:'FAQPage en páginas con preguntas frecuentes',w:'Elegibilidad para People Also Ask y AI Overviews.',g:['strat']},
+{t:'HowTo en tutoriales y guías paso a paso',w:'Rich snippets con steps en los resultados.',g:['strat']},
+{t:'Product + AggregateRating en WooCommerce (si aplica)',w:'Reviews y precio visibles en SERP. Alto impacto en CTR ecommerce.',g:['strat']},
+{t:'LocalBusiness completo (address, geo, openingHours) si aplica',w:'Habilita rich snippets locales y refuerza señales para Local Pack.',g:['crit']}
+]},
+{l:'Validación',items:[
+{t:'Testear en search.google.com/test/rich-results',w:'Schema mal formado no genera rich snippets aunque esté implementado.',g:['crit']},
+{t:'Revisar GSC > Enhancements: errores de schema reportados',w:'GSC reporta schema con errores que impiden rich snippets.',g:['strat']},
+{t:'Validar en validator.schema.org',w:'Validación técnica completa de la estructura.',g:['deep']}
+]}
+],
+rf:['Schema implementado pero sin testear (con errores silenciosos)','Organization schema sin sameAs','Article schema sin author o con author genérico','Schema generado por dos plugins en conflicto','Product schema sin price o availability']},
+
+{id:'p2_offpage',label:'Off-page & autoridad',badge:'2D',
+ptag:'pt-offpage',ptext:'Autoridad de dominio',
+sub:'Link building estratégico, brand mentions y construcción progresiva de autoridad de dominio. Sin off-page, el SEO on-page tiene un techo.',
+insight:'Un backlink de un sitio mediocre del mismo nicho puede valer más que uno de un portal generalista con DA alto. La relevancia temática superó al DA como señal primaria.',
+sections:[
+{l:'Auditoría de perfil de backlinks',items:[
+{t:'Auditar backlinks existentes: calidad, diversidad, toxicidad (Ahrefs/Semrush)',w:'No podés mejorar lo que no medís. El punto de partida define la estrategia.',g:['crit']},
+{t:'Disavow links tóxicos si hay penalización manual activa en GSC',w:'Links spam activos pueden estar suprimiendo rankings.',g:['crit']},
+{t:'Link reclamation: menciones de marca sin link → solicitar el link',w:'La mención ya existe. Solo es cuestión de pedirlo.',g:['qw']}
+]},
+{l:'Link building progresivo',items:[
+{t:'Guest posts en sitios editoriales con relevancia temática',w:'Quality > quantity. 5 links de sitios niche relevantes > 50 directorios genéricos.',g:['strat']},
+{t:'Broken link building: links rotos en sitios relevantes + ofrecer contenido propio',w:'Táctica de bajo costo y alta tasa de aceptación.',g:['strat']},
+{t:'Digital PR: estudios originales o datos propios para cobertura orgánica',w:'Contenido linkeable de alta calidad genera links pasivos a escala.',g:['deep']}
+]},
+{l:'Brand & NAP',items:[
+{t:'Consistencia de NAP en todos los directorios y perfiles',w:'NAP inconsistente = señales contradictorias para Knowledge Graph.',g:['crit']},
+{t:'Monitorear menciones de marca (Google Alerts, Ahrefs Alerts)',w:'Las menciones sin link son señales de autoridad para Google.',g:['strat']}
+]}
+],
+rf:['Perfil de backlinks con >20% links spam','Todos los links con anchor text exact-match','NAP diferente en GBP vs sitio web','Sin ninguna estrategia de link building activa','Links de PBNs o exchanges masivos']},
+
+{id:'p2_local',label:'SEO Local',badge:'2E',
+ptag:'pt-local',ptext:'Si aplica',
+sub:'Para negocios con cobertura geográfica definida. El Local Pack a menudo supera al orgánico en CTR para búsquedas con intent local.',
+insight:'Una hora bien invertida en optimizar Google Business Profile puede superar semanas de link building para negocios locales. El ratio esfuerzo/impacto es el mejor de todo el SEO.',
+sections:[
+{l:'Google Business Profile',items:[
+{t:'GBP completo: categoría principal correcta, descripción, fotos, horarios, servicios',w:'GBP incompleto = posición inferior en Local Pack.',g:['crit']},
+{t:'NAP 100% consistente: sitio, GBP, directorios, redes sociales',w:'Cada inconsistencia es una señal contradictoria para Google Local.',g:['crit']},
+{t:'Responder a todas las reseñas (positivas y negativas)',w:'Las respuestas son señal de engagement y confianza para Google.',g:['strat']},
+{t:'Fotos actualizadas: interior, exterior, equipo, productos/servicios',w:'Perfiles con fotos reciben significativamente más clics.',g:['qw']}
+]},
+{l:'Señalización geográfica en el sitio',items:[
+{t:'Keywords locales en titles, H1 y primer párrafo de páginas de servicio',w:'"Agencia SEO Mendoza" rankea donde "Agencia SEO" no llega.',g:['crit']},
+{t:'Schema LocalBusiness con address, geo, openingHours',w:'Estructura los datos de negocio para Google Maps y AI search.',g:['crit']},
+{t:'Landing pages por ciudad/región si hay cobertura multi-zona',w:'Una página por ciudad supera a una página genérica para búsquedas locales.',g:['strat']}
+]},
+{l:'Monitoreo local',items:[
+{t:'Posición en Local Pack (3-pack de mapas) para keywords objetivo',w:'Local Pack y orgánico son resultados distintos. Trackear ambos.',g:['strat']},
+{t:'Apple Maps y Bing Places verificados (mercados US/UK)',w:'Apple Maps tiene uso significativo en mercados anglosajones.',g:['strat']}
+]}
+],
+rf:['NAP diferente en sitio vs GBP','GBP con categoría principal genérica ("Empresa")','Sin una sola reseña en Google','Múltiples GBPs para el mismo negocio','Sin landing pages locales en sitio con múltiples zonas']}
+];
+
+/* ================================================================
+   FASE 3 DATA — Retainer Mensual (Mes 5+)
+   ================================================================ */
+const WEEKLY={
+w1:[
+{l:'Monitoreo GSC & rankings',items:[
+{t:'Revisar GSC > Coverage: nuevos errores de indexación',w:'Detectar antes de que impacten rankings. 5 minutos de revisión semanal.',g:['crit','month']},
+{t:'Revisar GSC > Core Web Vitals: cambios o regresiones',w:'Una actualización de plugin puede romper CWV. Detectarlo a tiempo.',g:['crit','month']},
+{t:'Revisar GSC > Schema/Enhancements: errores nuevos',w:'Schema roto no genera rich snippets.',g:['strat','month']},
+{t:'Chequear posiciones de keywords objetivo (top 10 monitoreados)',w:'Movimientos de posición dan contexto para las acciones del mes.',g:['strat','month']},
+{t:'Revisar GA4: tráfico orgánico vs semana/mes anterior',w:'Caída >15% en una semana = señal de alerta a investigar.',g:['strat','month']}
+]},
+{l:'Monitoreo técnico',items:[
+{t:'Verificar uptime y tiempo de carga del sitio (UptimeRobot o similar)',w:'Sitio caído = pérdida de rankings y conversiones simultáneas.',g:['crit','month']},
+{t:'Chequear Console del browser: nuevos errores JS en páginas críticas',w:'Errores JS pueden estar silenciosamente rompiendo formularios o tracking.',g:['strat','month']},
+{t:'Revisar si hay actualizaciones pendientes de WP/plugins críticos',w:'Deuda de actualización = riesgo de seguridad acumulado.',g:['strat','month']}
+]}
+],
+w2:[
+{l:'Producción de contenido',items:[
+{t:'Publicar o actualizar 1-2 piezas del clúster de contenido activo',w:'Sin producción constante el SEO se estanca. Los clústeres requieren densidad para generar autoridad.',g:['crit','month']},
+{t:'Optimizar 2-3 páginas existentes con oportunidades en GSC (posiciones 8-15)',w:'Las páginas en posición 8-15 tienen el mayor potencial de mejora rápida con ajustes on-page.',g:['strat','month']},
+{t:'Actualizar al menos 1 contenido antiguo (fecha, datos, links rotos internos)',w:'Freshness signal para Google. Actualizar es más rápido que crear desde cero.',g:['strat','month']}
+]},
+{l:'On-page & E-E-A-T',items:[
+{t:'Revisar que los nuevos contenidos publicados tienen: schema Article, author, BLUF, FAQs si aplica',w:'Checklist rápido post-publicación para asegurar calidad SEO.',g:['strat','month']},
+{t:'Verificar que los nuevos contenidos tienen al menos 2 links internos entrantes',w:'Sin links internos, las páginas nuevas no reciben autoridad ni son descubiertas rápido.',g:['strat','month']},
+{t:'Revisar oportunidades de optimización para AI Overviews / PAA',w:'¿Alguna página nueva podría ranquear en PAA con un ajuste de formato?',g:['deep','month']}
+]}
+],
+w3:[
+{l:'SEO técnico recurrente',items:[
+{t:'Auditoría rápida de links rotos internos (Screaming Frog o GSC)',w:'Links rotos acumulan con el tiempo. Una revisión mensual es suficiente.',g:['strat','month']},
+{t:'Verificar que redirects 301 siguen funcionando (post-actualizaciones)',w:'Las actualizaciones de WP/plugins pueden romper redirects existentes.',g:['strat','month']},
+{t:'Revisar velocidad de las páginas más visitadas del mes (PageSpeed Insights)',w:'Las páginas más visitadas tienen el mayor impacto en CWV reales.',g:['strat','month']},
+{t:'Chequear GSC > URL Inspection en páginas recién publicadas',w:'Verificar que Google indexó el contenido nuevo.',g:['qw','month']}
+]},
+{l:'Off-page & autoridad',items:[
+{t:'Buscar 2-3 oportunidades de link building del mes (broken links, guest posts)',w:'Consistencia > intensidad. Un link bueno al mes construye más que 20 links malos.',g:['strat','month']},
+{t:'Revisar menciones de marca sin link (Google Alerts)',w:'Convertir menciones en links es el link building de menor fricción.',g:['qw','month']},
+{t:'Chequear si hay menciones de la marca en AI search (Perplexity, ChatGPT)',w:'KPI de GEO. Monitorear cada mes si el cliente tiene estrategia de contenido activa.',g:['deep','month']}
+]}
+],
+w4:[
+{l:'Cierre & datos del mes',items:[
+{t:'Compilar KPIs del mes: tráfico, posiciones, conversiones, CWV, impresiones, CTR',w:'Sin datos consolidados no hay reporte. Esta semana es el cierre de producción.',g:['crit','month']},
+{t:'Identificar las 3 páginas con mayor mejora de posición en el mes',w:'Los wins específicos son lo que el cliente quiere ver en el reporte.',g:['strat','month']},
+{t:'Identificar 1-2 problemas o caídas del mes con causa raíz',w:'Transparencia sobre problemas con contexto = confianza. Sin contexto = preocupación.',g:['strat','month']}
+]},
+{l:'Planificación mes siguiente',items:[
+{t:'Definir el contenido a publicar el próximo mes (con keywords y clúster asignado)',w:'El calendario de contenido debe estar definido antes del reporte, no después.',g:['crit','month']},
+{t:'Priorizar los 3-5 ítems técnicos del backlog por impacto/esfuerzo',w:'No todo el backlog es igual de urgente. Priorización explícita cada mes.',g:['strat','month']},
+{t:'Preparar y enviar reporte mensual al cliente',w:'El reporte es el producto visible del trabajo. Sin él, el cliente no percibe el valor.',g:['crit','month']}
+]}
+]};
+
+const KPIS=[
+{id:'trafico',name:'Tráfico orgánico',icon:'👥',fields:['Sesiones orgánicas'],units:['']},
+{id:'posicion',name:'Posición media',icon:'📍',fields:['Posición media GSC'],units:[''],lower_is_better:true},
+{id:'impresiones',name:'Impresiones',icon:'👁',fields:['Impresiones GSC'],units:['']},
+{id:'ctr',name:'CTR orgánico',icon:'🎯',fields:['CTR (%)'],units:['%']},
+{id:'conversiones',name:'Conversiones',icon:'✉️',fields:['Leads / conversiones'],units:['']},
+{id:'cwv',name:'Core Web Vitals',icon:'⚡',fields:['LCP (s)','INP (ms)','CLS'],units:['s','ms',''],lower_is_better:true},
+{id:'backlinks',name:'Backlinks',icon:'🔗',fields:['Backlinks totales','Dominios referentes'],units:['','']},
+{id:'geo',name:'Visibilidad AI',icon:'🤖',fields:['Menciones AI (est.)'],units:['']}
+];
+
+/* ================================================================
+   CORE RENDER ENGINE
+   ================================================================ */
+function key(phase,id,si,ci){return `p${phase}_${id}_${si}_${ci}`}
+
+function tags(g){
+  if(!g||!g.length)return'';
+  return'<span class="ci-tags">'+g.map(t=>{
+    if(t==='crit')return'<span class="ctag t-crit">Crítico</span>';
+    if(t==='strat')return'<span class="ctag t-strat">Estratégico</span>';
+    if(t==='deep')return'<span class="ctag t-deep">Profundo</span>';
+    if(t==='new')return'<span class="ctag t-new">Nuevo 2025</span>';
+    if(t==='qw')return'<span class="ctag t-qw">Quick win</span>';
+    if(t==='month')return'<span class="ctag t-month">Mensual</span>';
+    return'';
+  }).join('')+'</span>';
+}
+
+function slabel(text){
+  return`<div class="slabel">${text}<div class="slabel-line"></div></div>`;
+}
+
+function buildStage(phase,stage){
+  let total=0,done=0;
+  stage.sections.forEach((sec,si)=>sec.items.forEach((it,ci)=>{
+    total++;if(getStoreVal(key(phase,stage.id,si,ci)))done++;
+  }));
+  const pct=total>0?Math.round(done/total*100):0;
+  const fillClass=`p${phase}fill`;
+
+  let html=`<div style="margin-bottom:.75rem">
+    <p style="font-size:12.5px;color:var(--text2);line-height:1.6">${stage.sub}</p>
+  </div>
+  <div class="insight ${phase===2?'blue':''}"><strong>Como piensa un senior:</strong> ${stage.insight}</div>`;
+
+  if(stage.devtools&&stage.devtools.length){
+    html+=slabel('DevTools: dónde mirarlo');
+    html+=`<div class="dt-grid">`;
+    stage.devtools.forEach(d=>{
+      html+=`<div class="dt-card"><strong>${d.p}</strong><span>${d.u}</span></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  html+=`<div class="sp">
+    <span class="sp-count">${done}/${total} completados</span>
+    <button class="reset-btn" onclick="resetStage(${phase},'${stage.id}')">Resetear</button>
+  </div>
+  <div class="spbar"><div class="s-pfill ${fillClass}" style="width:${pct}%"></div></div>`;
+
+  stage.sections.forEach((sec,si)=>{
+    html+=slabel(sec.l);
+    html+=`<div class="checklist">`;
+    sec.items.forEach((it,ci)=>{
+      const rawKey=key(phase,stage.id,si,ci);
+      const isDone=getStoreVal(rawKey);
+      html+=`<div class="ci${isDone?' done':''}" onclick="toggleItem(${phase},'${stage.id}',${si},${ci})">
+        <div class="ci-box"><span class="ci-ck">✓</span></div>
+        <div class="ci-body">
+          <div class="ci-text">${it.t}${tags(it.g)}</div>
+          <div class="ci-why">${it.w}</div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+
+  if(stage.rf&&stage.rf.length){
+    html+=slabel('Red flags típicos');
+    html+=`<div class="rf-list">`;
+    stage.rf.forEach(r=>{ html+=`<div class="rf"><div class="rf-dot"></div><span>${r}</span></div>`; });
+    html+=`</div>`;
+  }
+  return html;
+}
+
+function buildWeekChecklist(weekItems,weekId){
+  let html='';
+  weekItems.forEach((sec,si)=>{
+    html+=slabel(sec.l);
+    html+=`<div class="checklist">`;
+    sec.items.forEach((it,ci)=>{
+      const rawKey=`w${weekId}_${si}_${ci}`;
+      const isDone=getStoreVal(rawKey);
+      html+=`<div class="ci${isDone?' done':''}" onclick="toggleWeekItem('${rawKey}',this)">
+        <div class="ci-box"><span class="ci-ck">✓</span></div>
+        <div class="ci-body">
+          <div class="ci-text" style="${isDone?'text-decoration:line-through':''}">${it.t}${tags(it.g)}</div>
+          <div class="ci-why">${it.w}</div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  return html;
+}
+
+function buildKPIGrid(){
+  const grid=document.getElementById('kpiGrid');
+  if(!grid)return;
+  let html='';
+  KPIS.forEach(kpi=>{
+    html+=`<div class="kpi-card">
+      <div class="kpi-name"><span class="kpi-icon">${kpi.icon}</span>${kpi.name}</div>
+      <div class="kpi-fields">`;
+    kpi.fields.forEach((f,fi)=>{
+      const pid=`kpi_${kpi.id}_prev_${fi}`;
+      const cid=`kpi_${kpi.id}_curr_${fi}`;
+      html+=`<div style="font-size:10px;color:var(--text3);margin-bottom:2px">${f}</div>
+        <div class="kpi-row">
+          <label>Ant.</label>
+          <input class="kpi-input" type="number" id="${pid}" placeholder="—" oninput="calcDelta('${kpi.id}',${fi},'${pid}','${cid}','delta_${kpi.id}_${fi}',${kpi.lower_is_better||false})" step="any">
+          <label>Act.</label>
+          <input class="kpi-input" type="number" id="${cid}" placeholder="—" oninput="calcDelta('${kpi.id}',${fi},'${pid}','${cid}','delta_${kpi.id}_${fi}',${kpi.lower_is_better||false})" step="any">
+          <span class="kpi-delta delta-flat" id="delta_${kpi.id}_${fi}">—</span>
+        </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  grid.innerHTML=html;
+}
+
+function calcDelta(kpiId,fi,prevId,currId,deltaId,lowerIsBetter){
+  const prev=parseFloat(document.getElementById(prevId)?.value);
+  const curr=parseFloat(document.getElementById(currId)?.value);
+  const el=document.getElementById(deltaId);
+  if(!el)return;
+  if(isNaN(prev)&&isNaN(curr)){el.textContent='—';el.className='kpi-delta delta-flat';return;}
+  if(!isNaN(prev)||!isNaN(curr)){
+    // Save to Supabase
+    const monthKey=getCurrentMonthKey();
+    saveKPI(monthKey,kpiId,fi,isNaN(prev)?null:prev,isNaN(curr)?null:curr);
+  }
+  if(isNaN(prev)||isNaN(curr)){el.textContent='—';el.className='kpi-delta delta-flat';return;}
+  if(prev===0){el.textContent='—';el.className='kpi-delta delta-flat';return;}
+  const pct=((curr-prev)/prev*100).toFixed(1);
+  const isUp=curr>prev;
+  const isGood=lowerIsBetter?!isUp:isUp;
+  el.textContent=(isUp?'+':'')+pct+'%';
+  el.className='kpi-delta '+(isGood?'delta-up':curr===prev?'delta-flat':'delta-down');
+}
+
+/* ================================================================
+   TOGGLE & PROGRESS
+   ================================================================ */
+function toggleItem(phase,stageId,si,ci){
+  const rawKey=key(phase,stageId,si,ci);
+  const current=getStoreVal(rawKey);
+  saveItem(rawKey,!current);
+  const stages=phase===1?PHASE1:PHASE2;
+  const idx=stages.findIndex(s=>s.id===stageId);
+  document.getElementById(`content-${phase}-stage-${idx}`).innerHTML=buildStage(phase,stages[idx]);
+  updateGP();
+}
+
+function toggleWeekItem(rawKey,el){
+  const current=getStoreVal(rawKey);
+  saveItem(rawKey,!current);
+  const newVal=!current;
+  el.classList.toggle('done',newVal);
+  const textEl=el.querySelector('.ci-text');
+  if(textEl)textEl.style.textDecoration=newVal?'line-through':'none';
+}
+
+function resetStage(phase,stageId){
+  if(!confirm('¿Resetear esta etapa? Se borrarán todos los checks.'))return;
+  const stages=phase===1?PHASE1:PHASE2;
+  const stage=stages.find(s=>s.id===stageId);
+  const keysToReset=[];
+  stage.sections.forEach((sec,si)=>sec.items.forEach((it,ci)=>{
+    const rawKey=key(phase,stageId,si,ci);
+    keysToReset.push(rawKey);
+    delete STORE[`${currentProject}_${rawKey}`];
+  }));
+  // Batch delete from Supabase
+  setSyncStatus('syncing','Reseteando...');
+  Promise.all(keysToReset.map(k=>
+    sb.from('toolkit_progress').delete()
+      .eq('user_id',currentProject).eq('item_key',k)
+  )).then(()=>{
+    setSyncStatus('ok','Reseteado ✓');
+    setTimeout(()=>setSyncStatus('ok','Sincronizado'),2000);
+  }).catch(()=>setSyncStatus('error','Error al resetear'));
+  // Update localStorage
+  const localData=JSON.parse(localStorage.getItem(`toolkit_${currentProject}`)||'{}');
+  keysToReset.forEach(k=>delete localData[`${currentProject}_${k}`]);
+  localStorage.setItem(`toolkit_${currentProject}`,JSON.stringify(localData));
+  const idx=stages.findIndex(s=>s.id===stageId);
+  document.getElementById(`content-${phase}-stage-${idx}`).innerHTML=buildStage(phase,stages[idx]);
+  updateGP();
+}
+
+function updateGP(){
+  const phase=currentPhase;
+  if(phase===3){
+    document.getElementById('gpLabel').textContent='Fase 3 — Retainer activo';
+    document.getElementById('gpPct').style.color='var(--phase3)';
+    document.getElementById('gpFill').style.background='var(--phase3)';
+    let total=0,done=0;
+    Object.keys(WEEKLY).forEach(w=>{
+      WEEKLY[w].forEach((sec,si)=>{
+        sec.items.forEach((it,ci)=>{
+          total++;
+          if(getStoreVal(`w${w.replace('w','')+1}_${si}_${ci}`)||getStoreVal(`w${w}_${si}_${ci}`))done++;
+        });
+      });
+    });
+    // Simpler count
+    let wTotal=0,wDone=0;
+    [1,2,3,4].forEach(w=>{
+      WEEKLY[`w${w}`].forEach((sec,si)=>{
+        sec.items.forEach((it,ci)=>{
+          wTotal++;
+          if(getStoreVal(`w${w}_${si}_${ci}`))wDone++;
+        });
+      });
+    });
+    const pct=wTotal>0?Math.round(wDone/wTotal*100):0;
+    document.getElementById('gpPct').textContent=pct+'%';
+    document.getElementById('gpFill').style.width=pct+'%';
+    document.getElementById('gpDetail').textContent=`${wDone} de ${wTotal} tareas del ciclo mensual completadas`;
+    return;
+  }
+  const stages=phase===1?PHASE1:PHASE2;
+  const color=phase===1?'var(--phase1)':'var(--phase2)';
+  document.getElementById('gpPct').style.color=color;
+  document.getElementById('gpFill').style.background=color;
+  document.getElementById('gpLabel').textContent=`Progreso Fase ${phase} — ${currentProject}`;
+  let total=0,done=0;
+  stages.forEach(stage=>stage.sections.forEach((sec,si)=>sec.items.forEach((it,ci)=>{
+    total++;if(getStoreVal(key(phase,stage.id,si,ci)))done++;
+  })));
+  const pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('gpPct').textContent=pct+'%';
+  document.getElementById('gpFill').style.width=pct+'%';
+  document.getElementById('gpDetail').textContent=`${done} de ${total} items completados`;
+}
+
+/* ================================================================
+   NAVIGATION
+   ================================================================ */
+function switchPhase(p){
+  currentPhase=p;
+  document.querySelectorAll('.phase-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.phase-btn[data-phase="${p}"]`).classList.add('active');
+  document.querySelectorAll('.phase-panel').forEach(panel=>panel.classList.remove('active'));
+  document.getElementById(`phase-${p}`).classList.add('active');
+  updateGP();
+}
+
+function switchTab(phase,idx){
+  const tabsId=`tabs-${phase}`;
+  const contentId=`content-${phase}`;
+  document.querySelectorAll(`#${tabsId} .tab-btn`).forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.querySelectorAll(`#${contentId} .stage-view`).forEach((v,i)=>v.classList.toggle('active',i===idx));
+}
+
+function switchWeek(w){
+  document.querySelectorAll('.week-btn').forEach((b,i)=>b.classList.toggle('active',i===w-1));
+  document.querySelectorAll('.week-view').forEach((v,i)=>v.classList.toggle('active',i===w-1));
+  updateGP();
+}
+
+/* ================================================================
+   REPORT GENERATOR
+   ================================================================ */
+function fmtDelta(prev,curr,lowerBetter){
+  if(!prev||!curr||isNaN(prev)||isNaN(curr))return'';
+  if(prev==0)return'';
+  const pct=((curr-prev)/prev*100).toFixed(1);
+  const up=curr>prev;
+  const good=lowerBetter?!up:up;
+  return` (${up?'▲':'▼'} ${Math.abs(pct)}%)`;
+}
+
+function generateReport(){
+  const client=document.getElementById('r-client').value||'Cliente';
+  const month=document.getElementById('r-month').value||'—';
+  const tPrev=parseFloat(document.getElementById('r-t-prev').value);
+  const tCurr=parseFloat(document.getElementById('r-t-curr').value);
+  const posPrev=parseFloat(document.getElementById('r-pos-prev').value);
+  const posCurr=parseFloat(document.getElementById('r-pos-curr').value);
+  const impPrev=parseFloat(document.getElementById('r-imp-prev').value);
+  const impCurr=parseFloat(document.getElementById('r-imp-curr').value);
+  const convPrev=parseFloat(document.getElementById('r-conv-prev').value);
+  const convCurr=parseFloat(document.getElementById('r-conv-curr').value);
+  const ctrPrev=parseFloat(document.getElementById('r-ctr-prev').value);
+  const ctrCurr=parseFloat(document.getElementById('r-ctr-curr').value);
+  const kw=document.getElementById('r-kw').value;
+  const wins=document.getElementById('r-wins').value;
+  const next=document.getElementById('r-next').value;
+  const status=document.getElementById('r-status').value;
+  const statusEmoji=status==='verde'?'🟢':status==='amarillo'?'🟡':'🔴';
+  const statusText=status==='verde'?'Progreso sostenido':status==='amarillo'?'Indicadores estables, oportunidades de mejora':'Revisión en curso';
+
+  document.getElementById('ro-title').textContent=`Reporte SEO — ${month}`;
+  document.getElementById('ro-sub').textContent=`${client} · Preparado por SEO & Web Growth Specialist`;
+
+  let summary=`Estado del proyecto: ${statusEmoji} ${statusText}\n\n`;
+  if(!isNaN(tCurr)&&!isNaN(tPrev)){
+    const diff=tCurr-tPrev;
+    const pct=((diff/tPrev)*100).toFixed(1);
+    summary+=`Este mes el sitio recibió ${tCurr.toLocaleString()} visitas desde búsqueda orgánica`;
+    if(!isNaN(tPrev))summary+=`, un ${Math.abs(pct)}% ${diff>=0?'más':'menos'} que el mes anterior (${tPrev.toLocaleString()} visitas)`;
+    summary+='.';
+  }
+  document.getElementById('ro-summary').textContent=summary;
+
+  let metrics='';
+  const rows=[
+    ['Tráfico orgánico',tCurr,tPrev,false,'visitas'],
+    ['Posición media en Google',posCurr,posPrev,true,''],
+    ['Impresiones en Google',impCurr,impPrev,false,''],
+    ['CTR (tasa de clics)',ctrCurr,ctrPrev,false,'%'],
+    ['Leads / Conversiones',convCurr,convPrev,false,'']
+  ];
+  rows.forEach(([name,curr,prev,lower,unit])=>{
+    if(!isNaN(curr)){
+      metrics+=`<div class="ro-kpi-row">
+        <span class="ro-kpi-label">${name}</span>
+        <span class="ro-kpi-val">${curr.toLocaleString()}${unit}${fmtDelta(prev,curr,lower)}</span>
+      </div>`;
+    }
+  });
+  document.getElementById('ro-metrics').innerHTML=metrics||'<span style="font-size:12px;color:var(--text3)">Completar datos en el KPI Tracker</span>';
+  document.getElementById('ro-kw').textContent=kw||'—';
+  document.getElementById('ro-wins').textContent=wins||'—';
+  document.getElementById('ro-next').textContent=next||'—';
+
+  const out=document.getElementById('reportOutput');
+  out.style.display='block';
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function copyReport(){
+  const client=document.getElementById('r-client').value||'Cliente';
+  const month=document.getElementById('r-month').value||'—';
+  const roSummary=document.getElementById('ro-summary').textContent;
+  const roMetrics=document.getElementById('ro-metrics').querySelectorAll('.ro-kpi-row');
+  const roKw=document.getElementById('ro-kw').textContent;
+  const roWins=document.getElementById('ro-wins').textContent;
+  const roNext=document.getElementById('ro-next').textContent;
+
+  let text=`REPORTE SEO — ${month}\n${client}\n${'─'.repeat(40)}\n\n`;
+  text+=`RESUMEN DEL MES\n${roSummary}\n\n`;
+  text+=`MÉTRICAS CLAVE\n`;
+  roMetrics.forEach(row=>{
+    const label=row.querySelector('.ro-kpi-label')?.textContent||'';
+    const val=row.querySelector('.ro-kpi-val')?.textContent||'';
+    text+=`• ${label}: ${val}\n`;
+  });
+  text+=`\nPOSICIONAMIENTO DESTACADO\n${roKw}\n\n`;
+  text+=`LOGROS DEL MES\n${roWins}\n\n`;
+  text+=`PLAN PRÓXIMO MES\n${roNext}\n`;
+
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar reporte al portapapeles';btn.classList.remove('copied');},2500);
+  });
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+function initPhase(phase,stages,tabsId,contentId){
+  const tabsEl=document.getElementById(tabsId);
+  const contentEl=document.getElementById(contentId);
+  const color=phase===1?'1':'2';
+  stages.forEach((stage,i)=>{
+    const isNew=stage.ptag==='pt-eeat'||stage.ptag==='pt-geo'||stage.ptag==='pt-schema';
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(i===0?' active':'');
+    btn.setAttribute('data-phase',color);
+    btn.innerHTML=`<span class="tab-badge">${stage.badge}</span>${stage.label}${isNew?'<span class="tnew">★</span>':''}`;
+    btn.onclick=()=>switchTab(phase,i);
+    tabsEl.appendChild(btn);
+    const view=document.createElement('div');
+    view.className='stage-view'+(i===0?' active':'');
+    view.id=`${contentId}-stage-${i}`;
+    view.innerHTML=buildStage(phase,stage);
+    contentEl.appendChild(view);
+  });
+}
+
+function initWeeks(){
+  document.getElementById('w1-checklist').innerHTML=buildWeekChecklist(WEEKLY.w1,1);
+  document.getElementById('w2-checklist').innerHTML=buildWeekChecklist(WEEKLY.w2,2);
+  document.getElementById('w3-checklist').innerHTML=buildWeekChecklist(WEEKLY.w3,3);
+  document.getElementById('w4-checklist').innerHTML=buildWeekChecklist(WEEKLY.w4,4);
+  buildKPIGrid();
+}
+
+initPhase(1,PHASE1,'tabs-1','content-1');
+initPhase(2,PHASE2,'tabs-2','content-2');
+initWeeks();
+loadProjects();
+</script>
+</body>
+</html>
